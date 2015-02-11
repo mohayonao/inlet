@@ -2,7 +2,10 @@
 
 class InPrint extends require("./object") {
   constructor(opts) {
-    super(1, 0);
+    super({
+      numinlets: 1,
+      numoutlets: 0
+    });
 
     this._printId = opts.printId;
   }

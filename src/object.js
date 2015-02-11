@@ -1,17 +1,27 @@
 "use strict";
 
+var util = require("./util");
+
+var __id = 0;
+
 class InObject {
-  constructor(numOfInlets = 0, numOfOutlets = 0) {
-    this._numOfInlets = numOfInlets;
-    this._numOfOutlets = numOfOutlets;
+  constructor(opts) {
+    this.id = `obj-${++__id}`;
+    this.maxclass = util.defaults(opts.maxclass, "newobj");
+    this.numinlets = util.defaults(opts.numinlets, 1);
+    this.numoutlets = util.defaults(opts.numoutlets, 1);
+    this.patching_rect = [ 0, 0, 100, 22 ];
+    this.style = "";
+    this.text = null;
+
     this._inlets = [];
     this._outlets = [];
 
     var i;
-    for (i = 0; i < numOfOutlets; i++) {
+    for (i = 0; i < this.numoutlets; i++) {
       this[i] = this._outlets[i] = new Outlet(this, i);
     }
-    for (i = 0; i < numOfInlets; i++) {
+    for (i = 0; i < this.numinlets; i++) {
       this._inlets[i] = new Inlet(this, i);
       if (!this[i]) {
         this[i] = this._inlets[i];
@@ -37,6 +47,16 @@ class InObject {
     if (this._outlets[0]) {
       this._outlets[0].disconnect(target);
     }
+  }
+
+  setPosition(x=0, y=0) {
+    this.patching_rect[0] = x;
+    this.patching_rect[1] = y;
+  }
+
+  setSize(w=100, h=22) {
+    this.patching_rect[2] = w;
+    this.patching_rect[3] = h;
   }
 
   click() {}

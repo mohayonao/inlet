@@ -2,7 +2,10 @@
 
 class InCounter extends require("./object") {
   constructor(opts) {
-    super(5, 4);
+    super({
+      numinlets: 5,
+      inoutlets: 4
+    });
 
     this._algo = opts.algo;
     this._from = opts.from;
