@@ -1,5 +1,6 @@
 "use strict";
 
+require("./button");
 require("./counter");
 require("./metro");
 require("./print");
