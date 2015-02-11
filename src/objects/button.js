@@ -1,14 +1,16 @@
 "use strict";
 
+var util = require("../util");
+
 class InButton extends require("./object") {
-  constructor() {
-    super({
+  constructor(args, opts) {
+    super(util.merge({
       maxclass: "button",
       numinlets: 1,
       numoutlets: 1,
-    });
-    this.patching_rect[2] = 24;
-    this.patching_rect[3] = 24;
+      width: util.defaults(opts.width, 24),
+      height: util.defaults(opts.height, 24),
+    }, opts));
   }
 
   recv() {
@@ -20,8 +22,8 @@ class InButton extends require("./object") {
   }
 }
 
-require("../core/klass").register("button", ()=> {
-  return new InButton();
+require("../core/klass").register("button", (args, opts)=> {
+  return new InButton(null, opts);
 });
 
 export default InButton;

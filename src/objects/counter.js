@@ -1,15 +1,17 @@
 "use strict";
 
-class InCounter extends require("./object") {
-  constructor(opts) {
-    super({
-      numinlets: 5,
-      inoutlets: 4
-    });
+var util = require("../util");
 
-    this._algo = opts.algo;
-    this._from = opts.from;
-    this._to = opts.to;
+class InCounter extends require("./object") {
+  constructor(args, opts) {
+    super(util.merge({
+      numinlets: 5,
+      inoutlets: 4,
+    }, opts));
+
+    this._algo = 0;
+    this._from = args[0];
+    this._to = args[1];
     this._value = this._from;
     this._carryCount = 0;
   }
@@ -26,25 +28,8 @@ class InCounter extends require("./object") {
   }
 }
 
-require("../core/klass").register("counter", (...args) => {
-  var opts;
-
-  switch (args.length) {
-  case 0:
-    opts = { algo: 0, from: 0, to: Infinity };
-    break;
-  case 1:
-    opts = { algo: 0, from: 0, to: args[0] };
-    break;
-  case 2:
-    opts = { algo: args[0] < args[1] ? 0 : 1, from: args[0], to: args[1] };
-    break;
-  default:
-    opts = { algo: args[0], from: args[1], to: args[2] };
-    break;
-  }
-
-  return new InCounter(opts);
+require("../core/klass").register("counter", (args, opts) => {
+  return new InCounter(args, opts);
 });
 
 export default InCounter;

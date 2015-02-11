@@ -10,12 +10,18 @@ class InObject {
     this.maxclass = util.defaults(opts.maxclass, "newobj");
     this.numinlets = util.defaults(opts.numinlets, 1);
     this.numoutlets = util.defaults(opts.numoutlets, 1);
-    this.patching_rect = [ 0, 0, 100, 22 ];
+    this.patching_rect = [
+      util.defaults(opts.x, 0),
+      util.defaults(opts.y, 0),
+      util.defaults(opts.width, 100),
+      util.defaults(opts.height, 22),
+    ];
     this.style = "";
     this.text = null;
 
     this._inlets = [];
     this._outlets = [];
+    this.elem = null;
 
     var i;
     for (i = 0; i < this.numoutlets; i++) {
@@ -27,6 +33,19 @@ class InObject {
         this[i] = this._inlets[i];
       }
     }
+
+    if (opts.canvas) {
+      this.elem = global.document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      this.elem.setAttribute("x", this.patching_rect[0]);
+      this.elem.setAttribute("y", this.patching_rect[1]);
+      this.elem.setAttribute("width", this.patching_rect[2]);
+      this.elem.setAttribute("height", this.patching_rect[3]);
+      this.elem.setAttribute("rx", 5);
+      this.elem.setAttribute("ry", 5);
+      this.elem.setAttribute("fill", "white");
+      this.elem.setAttribute("stroke", "#16a085");
+      opts.canvas.appendChild(this.elem);
+    }
   }
 
   send(value, outlet=0) {
@@ -36,6 +55,8 @@ class InObject {
   }
 
   recv() {}
+
+  dispose() {}
 
   connect(target) {
     if (this._outlets[0]) {
@@ -49,7 +70,8 @@ class InObject {
     }
   }
 
-  dispose() {}
+  appendTo() {
+  }
 
   click() {}
 }

@@ -1,13 +1,15 @@
 "use strict";
 
-class InPrint extends require("./object") {
-  constructor(opts) {
-    super({
-      numinlets: 1,
-      numoutlets: 0
-    });
+var util = require("../util");
 
-    this._printId = opts.printId;
+class InPrint extends require("./object") {
+  constructor(args, opts) {
+    super(util.merge({
+      numinlets: 1,
+      numoutlets: 0,
+    }, opts));
+
+    this._printId = util.defaults(args[0], "printId");
   }
 
   recv(value) {
@@ -15,8 +17,8 @@ class InPrint extends require("./object") {
   }
 }
 
-require("../core/klass").register("print", (printId = "printId") => {
-  return new InPrint({ printId });
+require("../core/klass").register("print", (args, opts) => {
+  return new InPrint(args, opts);
 });
 
 export default InPrint;

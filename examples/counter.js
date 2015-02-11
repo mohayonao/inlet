@@ -1,7 +1,7 @@
-var toggle  = inlet("toggle");
-var metro   = inlet("metro 100");
-var counter = inlet("counter 0 15");
-var print   = inlet("print hoge");
+var toggle  = inlet("toggle", { x: 10, y: 10 });
+var metro   = inlet("metro 100", { x: 10, y: 40 });
+var counter = inlet("counter 0 15", { x: 10, y: 70 });
+var print   = inlet("print hoge", { x: 10, y: 100 });
 
 toggle [0].connect(metro  [0]);
 metro  [0].connect(counter[0]);

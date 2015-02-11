@@ -1,16 +1,24 @@
 "use strict";
 
+var util = require("../util");
+
 class InToggle extends require("./object") {
-  constructor() {
-    super({
+  constructor(args, opts) {
+    super(util.merge({
       maxclass: "toggle",
       numinlets: 1,
-      numoutlets: 1
-    });
-    this.patching_rect[2] = 24;
-    this.patching_rect[3] = 24;
+      numoutlets: 1,
+      width: util.defaults(opts.width, 24),
+      height: util.defaults(opts.height, 24),
+    }, opts));
 
     this._toggle = false;
+
+    if (this.elem) {
+      this.elem.addEventListener("click", () => {
+        this.click();
+      });
+    }
   }
 
   recv(value) {
@@ -28,12 +36,15 @@ class InToggle extends require("./object") {
   }
 
   _update() {
+    if (this.elem) {
+      this.elem.setAttribute("fill", this._toggle ? "#2ecc71" : "white");
+    }
     this.send(this._toggle ? 1 : 0);
   }
 }
 
-require("../core/klass").register("toggle", () => {
-  return new InToggle();
+require("../core/klass").register("toggle", (args, opts) => {
+  return new InToggle(args, opts);
 });
 
 export default InToggle;

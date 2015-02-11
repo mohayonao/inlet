@@ -19,9 +19,8 @@ klass.new = (query, opts) => {
   var instance = null;
 
   if (registered[klassName]) {
-    instance = registered[klassName].apply(null, args);
+    instance = registered[klassName].call(null, args, opts);
   }
-  opts = null;
 
   return instance;
 };
