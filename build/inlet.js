@@ -144,6 +144,10 @@ klass.__INLET__ = function (query) {
   return null;
 };
 
+klass.__INLET__.setup = function (opts) {
+  console.log(opts.canvas);
+};
+
 module.exports = klass;
 },{}],4:[function(require,module,exports){
 "use strict";
