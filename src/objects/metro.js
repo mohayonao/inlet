@@ -24,8 +24,8 @@ class InMetro extends require("./object") {
   }
 }
 
-require("./exports").metro = (interval = 5) => {
+require("../core/klass").register("metro", (interval = 5) => {
   return new InMetro({ interval });
-};
+});
 
 export default InMetro;

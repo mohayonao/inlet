@@ -15,8 +15,8 @@ class InPrint extends require("./object") {
   }
 }
 
-require("./exports").print = (printId = "printId") => {
+require("../core/klass").register("print", (printId = "printId") => {
   return new InPrint({ printId });
-};
+});
 
 export default InPrint;

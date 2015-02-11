@@ -1,9 +1,12 @@
 "use strict";
 
-require("./button");
-require("./counter");
-require("./metro");
-require("./print");
-require("./toggle");
+var klass = require("./core/klass");
+var util = require("./util");
 
-module.exports = require("./exports").__INLET__;
+require("./objects");
+
+export default (config = {}) => {
+  return (query, opts = {}) => {
+    return klass.new(query, util.merge(opts, config));
+  };
+};

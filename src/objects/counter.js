@@ -26,7 +26,7 @@ class InCounter extends require("./object") {
   }
 }
 
-require("./exports").counter = (...args) => {
+require("../core/klass").register("counter", (...args) => {
   var opts;
 
   switch (args.length) {
@@ -45,6 +45,6 @@ require("./exports").counter = (...args) => {
   }
 
   return new InCounter(opts);
-};
+});
 
 export default InCounter;

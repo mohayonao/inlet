@@ -1,6 +1,51 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.INLET=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
+var klass = {};
+var registered = {};
+
+klass.register = function (name, func) {
+  registered[name] = func;
+};
+
+klass["new"] = function (query, opts) {
+  var items = query.split(/\s+/);
+  var klassName = items.shift();
+  var args = items.map(function (x) {
+    if (/^[-+]?\d+(?:\.\d*)?$/.test(x)) {
+      x = +x;
+    }
+    return x;
+  });
+  var instance = null;
+
+  if (registered[klassName]) {
+    instance = registered[klassName].apply(null, args);
+  }
+  opts = null;
+
+  return instance;
+};
+
+module.exports = klass;
+},{}],2:[function(require,module,exports){
+"use strict";
+
+var klass = require("./core/klass");
+var util = require("./util");
+
+require("./objects");
+
+module.exports = function () {
+  var config = arguments[0] === undefined ? {} : arguments[0];
+  return function (query) {
+    var opts = arguments[1] === undefined ? {} : arguments[1];
+    return klass["new"](query, util.merge(opts, config));
+  };
+};
+},{"./core/klass":1,"./objects":5,"./util":11}],3:[function(require,module,exports){
+"use strict";
+
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
 
 var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
@@ -43,12 +88,12 @@ var InButton = (function (_require) {
   return InButton;
 })(require("./object"));
 
-require("./exports").button = function () {
+require("../core/klass").register("button", function () {
   return new InButton();
-};
+});
 
 module.exports = InButton;
-},{"./exports":3,"./object":6}],2:[function(require,module,exports){
+},{"../core/klass":1,"./object":7}],4:[function(require,module,exports){
 "use strict";
 
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
@@ -96,7 +141,7 @@ var InCounter = (function (_require) {
   return InCounter;
 })(require("./object"));
 
-require("./exports").counter = function () {
+require("../core/klass").register("counter", function () {
   for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
     args[_key] = arguments[_key];
   }
@@ -119,36 +164,10 @@ require("./exports").counter = function () {
   }
 
   return new InCounter(opts);
-};
+});
 
 module.exports = InCounter;
-},{"./exports":3,"./object":6}],3:[function(require,module,exports){
-"use strict";
-
-var klass = {};
-
-klass.__INLET__ = function (opts) {
-  return function (query) {
-    var items = query.split(/\s+/);
-    var name = items.shift();
-    var args = items.map(function (x) {
-      if (/^[-+]?\d+(?:\.\d*)?$/.test(x)) {
-        x = +x;
-      }
-      return x;
-    });
-    var instance = null;
-
-    if (klass[name]) {
-      instance = klass[name].apply(null, args);
-    }
-
-    return instance;
-  };
-};
-
-module.exports = klass;
-},{}],4:[function(require,module,exports){
+},{"../core/klass":1,"./object":7}],5:[function(require,module,exports){
 "use strict";
 
 require("./button");
@@ -156,9 +175,7 @@ require("./counter");
 require("./metro");
 require("./print");
 require("./toggle");
-
-module.exports = require("./exports").__INLET__;
-},{"./button":1,"./counter":2,"./exports":3,"./metro":5,"./print":7,"./toggle":8}],5:[function(require,module,exports){
+},{"./button":3,"./counter":4,"./metro":6,"./print":8,"./toggle":9}],6:[function(require,module,exports){
 "use strict";
 
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
@@ -206,20 +223,20 @@ var InMetro = (function (_require) {
   return InMetro;
 })(require("./object"));
 
-require("./exports").metro = function () {
+require("../core/klass").register("metro", function () {
   var interval = arguments[0] === undefined ? 5 : arguments[0];
   return new InMetro({ interval: interval });
-};
+});
 
 module.exports = InMetro;
-},{"./exports":3,"./object":6}],6:[function(require,module,exports){
+},{"../core/klass":1,"./object":7}],7:[function(require,module,exports){
 "use strict";
 
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
-var util = require("./util");
+var util = require("../util");
 
 var __id = 0;
 
@@ -281,6 +298,11 @@ var InObject = (function () {
           this._outlets[0].disconnect(target);
         }
       },
+      writable: true,
+      configurable: true
+    },
+    dispose: {
+      value: function dispose() {},
       writable: true,
       configurable: true
     },
@@ -401,7 +423,7 @@ var Outlet = (function () {
 })();
 
 module.exports = InObject;
-},{"./util":9}],7:[function(require,module,exports){
+},{"../util":11}],8:[function(require,module,exports){
 "use strict";
 
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
@@ -439,13 +461,13 @@ var InPrint = (function (_require) {
   return InPrint;
 })(require("./object"));
 
-require("./exports").print = function () {
+require("../core/klass").register("print", function () {
   var printId = arguments[0] === undefined ? "printId" : arguments[0];
   return new InPrint({ printId: printId });
-};
+});
 
 module.exports = InPrint;
-},{"./exports":3,"./object":6}],8:[function(require,module,exports){
+},{"../core/klass":1,"./object":7}],9:[function(require,module,exports){
 "use strict";
 
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
@@ -506,21 +528,42 @@ var InToggle = (function (_require) {
   return InToggle;
 })(require("./object"));
 
-require("./exports").toggle = function () {
+require("../core/klass").register("toggle", function () {
   return new InToggle();
-};
+});
 
 module.exports = InToggle;
-},{"./exports":3,"./object":6}],9:[function(require,module,exports){
+},{"../core/klass":1,"./object":7}],10:[function(require,module,exports){
 "use strict";
 
-exports.defaults = defaults;
-function defaults(value) {
+module.exports = function (value) {
   var defaultValue = arguments[1] === undefined ? null : arguments[1];
   return value !== undefined ? value : defaultValue;
-}
+};
+},{}],11:[function(require,module,exports){
+"use strict";
+
+var defaults = exports.defaults = require("./defaults");
+var merge = exports.merge = require("./merge");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-},{}]},{},[4])(4)
+},{"./defaults":10,"./merge":12}],12:[function(require,module,exports){
+"use strict";
+
+module.exports = function (obj1, obj2) {
+  var result = {};
+
+  Object.keys(obj1).forEach(function (key) {
+    result[key] = obj1[key];
+  });
+  Object.keys(obj2).forEach(function (key) {
+    if (!result.hasOwnProperty(key)) {
+      result[key] = obj2[key];
+    }
+  });
+
+  return result;
+};
+},{}]},{},[2])(2)
 });

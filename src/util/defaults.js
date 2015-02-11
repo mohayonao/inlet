@@ -1,5 +1,5 @@
 "use strict";
 
-export function defaults(value, defaultValue = null) {
+export default (value, defaultValue = null) => {
   return value !== undefined ? value : defaultValue;
-}
+};

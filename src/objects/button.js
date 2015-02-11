@@ -20,8 +20,8 @@ class InButton extends require("./object") {
   }
 }
 
-require("./exports").button = () => {
+require("../core/klass").register("button", ()=> {
   return new InButton();
-};
+});
 
 export default InButton;

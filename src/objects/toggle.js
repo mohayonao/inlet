@@ -32,8 +32,8 @@ class InToggle extends require("./object") {
   }
 }
 
-require("./exports").toggle = () => {
+require("../core/klass").register("toggle", () => {
   return new InToggle();
-};
+});
 
 export default InToggle;
