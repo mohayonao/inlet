@@ -9,7 +9,7 @@
   <style type="text/css">
     * { margin:0; padding:0 }
     html, body { width:100%; height:100%; background:white }
-    #header { position:absolute; top:0; left:0; width:100%; height:31px; border:solid #16a085; border-width:0 0 1px; background:#1abc9c; z-index:1 }
+    #header { position:absolute; top:0; left:0; width:100%; height:31px; border:solid #a58f86; border-width:0 0 1px; background:#b3ada0; z-index:1 }
     #header h1 { float:left; font-family:"Source Sans Pro",sans-serif; font-size:16px; color:white; margin:6px 31px }
     #header ul { list-style:none }
     #header ul li { float:right; display:inline-block; width:60px; height:22px }
@@ -17,14 +17,15 @@
     #editor { width:50%; float:left }
     #viewer { width:50%; float:left }
     .CodeMirror { font-family:'Monaco','Consolas',monospace; font-size:14px; height:100%; box-sizing:border-box }
-    .btn { font-family:"Source Sans Pro",sans-serif; margin:5px; font-size:16px; text-align:center; color:#ecf0f1; cursor:pointer }
-    .btn:hover { text-decoration:underline; background:#16a085 }
+    .btn { font-family:"Source Sans Pro",sans-serif; margin:5px; font-size:16px; text-align:center; color:white; cursor:pointer }
+    .btn:hover { text-decoration:underline; background:#a99e93 }
   </style>
 </head>
 <body>
   <div id="header">
     <h1>:INLET:</h1>
     <ul>
+      <li class="btn" id="github">GitHub</li>
       <li class="btn" id="link">Link</li>
       <li class="btn" id="stop">Stop</li>
       <li class="btn" id="run">Run</li>
@@ -87,6 +88,10 @@
 
     $("link").onclick = function() {
       window.location = "#" + window.encodeURIComponent(editor.getValue());
+    };
+
+    $("github").onclick = function() {
+      window.location = "https://github.com/mohayonao/inlet";
     };
 
     var q = window.decodeURIComponent(window.location.hash.substr(1));

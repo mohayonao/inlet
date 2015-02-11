@@ -37,7 +37,7 @@ class InToggle extends require("./object") {
 
   _update() {
     if (this.elem) {
-      this.elem.setAttribute("fill", this._toggle ? "#2ecc71" : "white");
+      this.elem.setAttribute("fill", this._toggle ? "#b3ada0" : "#fff");
     }
     this.send(this._toggle ? 1 : 0);
   }

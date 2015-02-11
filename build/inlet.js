@@ -294,8 +294,8 @@ var InObject = (function () {
       this.elem.setAttribute("height", this.patching_rect[3]);
       this.elem.setAttribute("rx", 5);
       this.elem.setAttribute("ry", 5);
-      this.elem.setAttribute("fill", "white");
-      this.elem.setAttribute("stroke", "#16a085");
+      this.elem.setAttribute("fill", "#fff");
+      this.elem.setAttribute("stroke", "#b3ada0");
       opts.canvas.appendChild(this.elem);
     }
   }
@@ -566,7 +566,7 @@ var InToggle = (function (_require) {
     _update: {
       value: function _update() {
         if (this.elem) {
-          this.elem.setAttribute("fill", this._toggle ? "#2ecc71" : "white");
+          this.elem.setAttribute("fill", this._toggle ? "#b3ada0" : "#fff");
         }
         this.send(this._toggle ? 1 : 0);
       },
