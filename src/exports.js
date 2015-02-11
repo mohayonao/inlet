@@ -2,21 +2,24 @@
 
 var klass = {};
 
-klass.__INLET__ = function(query) {
-  var items = query.split(/\s+/);
-  var name = items.shift();
-  var args = items.map(function(x) {
-    if (/^[-+]?\d+(?:\.\d*)?$/.test(x)) {
-      x = +x;
+klass.__INLET__ = function(opts) {
+  return function(query) {
+    var items = query.split(/\s+/);
+    var name = items.shift();
+    var args = items.map(function(x) {
+      if (/^[-+]?\d+(?:\.\d*)?$/.test(x)) {
+        x = +x;
+      }
+      return x;
+    });
+    var instance = null;
+
+    if (klass[name]) {
+      instance = klass[name].apply(null, args);
     }
-    return x;
-  });
 
-  if (klass[name]) {
-    return klass[name].apply(null, args);
-  }
-
-  return null;
+    return instance;
+  };
 };
 
 export default klass;

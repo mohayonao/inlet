@@ -16,7 +16,6 @@
     #body { padding-top:31px }
     #editor { width:50%; float:left }
     #viewer { width:50%; float:left }
-    #canvas { width:1000px; height:1000px; }
     .CodeMirror { font-family:'Monaco','Consolas',monospace; font-size:14px; height:100%; box-sizing:border-box }
     .btn { font-family:"Source Sans Pro",sans-serif; margin:5px; font-size:16px; text-align:center; color:#ecf0f1; cursor:pointer }
     .btn:hover { text-decoration:underline; background:#16a085 }
@@ -32,12 +31,17 @@
     </ul>
   </div>
   <div id="body"><div id="editor"></div><div id="viewer"><svg id="inlet::canvas"></svg></div></div>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/two.js/0.4.0/two.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.12.0/mode/javascript/javascript.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/addon/edit/matchbrackets.min.js"></script>
   <script src="//cdn.jsdelivr.net/es6-promise/1.0.0/promise.min.js"></script>
   <script src="build/inlet.js"></script>
   <script>
+  var AudioContext = window.AudioContext || window.webkitAudioContext;
+  var $ = document.getElementById.bind(document);
+  var inlet = null;
+
   function fetch(url) {
     return new Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest();
@@ -63,7 +67,11 @@
   window.onload = function() {
     "use strict";
 
-    var $ = document.getElementById.bind(document);
+    inlet = new INLET({
+      audioContext: new AudioContext(),
+      canvas: $("inlet::canvas"),
+      timerAPI: window
+    });
 
     var editor = CodeMirror($("editor"), {
       mode: "javascript", theme: "neo", workTime: 200, lineNumbers: true, matchBrackets: true,
@@ -76,6 +84,9 @@
     var clearTimeout = window.clearTimeout;
 
     function reset() {
+      if (inlet && inlet.dispose) {
+        inlet.dispose();
+      }
       Object.keys(timerIds).forEach(function(timerId) {
         window.clearInterval(timerId);
         window.clearTimeout(timerId);
