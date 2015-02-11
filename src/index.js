@@ -6,4 +6,4 @@ require("./metro");
 require("./print");
 require("./toggle");
 
-module.exports = require("./exports");
+module.exports = require("./exports").__INLET__;

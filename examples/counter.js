@@ -1,7 +1,7 @@
-var toggle  = Inlet.toggle();
-var metro   = Inlet.metro(100);
-var counter = Inlet.counter(0, 15);
-var print   = Inlet.print("hoge");
+var toggle  = INLET("toggle");
+var metro   = INLET("metro 100");
+var counter = INLET("counter 0 15");
+var print   = INLET("print hoge");
 
 toggle [0].connect(metro  [0]);
 metro  [0].connect(counter[0]);

@@ -19,7 +19,7 @@
   "scripts": {
     "build": "npm run build-6to5 && npm run build-browser",
     "build-6to5": "6to5 src --out-dir lib --remove-comments",
-    "build-browser": "browserify lib/index.js --standalone Inlet -o build/inlet.js",
+    "build-browser": "browserify lib/index.js --standalone INLET -o build/inlet.js",
     "cover": "istanbul cover node_modules/mocha/bin/_mocha",
     "lint": "jshint --reporter node_modules/jshint-stylish/stylish.js src test",
     "test": "mocha"
