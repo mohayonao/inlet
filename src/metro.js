@@ -11,12 +11,12 @@ class InMetro extends require("./object") {
     this._timerId = 0;
   }
 
-  recv(msg) {
-    if (this._timerId === 0 && !!msg.value) {
+  recv(value) {
+    if (this._timerId === 0 && !!value) {
       this._timerId = setInterval(() => {
-        this.send({ type: "bang", value: "bang" });
+        this.send("bang");
       }, this._interval);
-      this.send({ type: "bang", value: "bang" });
+      this.send("bang");
     } else {
       clearInterval(this._timerId);
       this._timerId = 0;

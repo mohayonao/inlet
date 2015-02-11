@@ -26,14 +26,14 @@ var InButton = (function (_require) {
   _prototypeProperties(InButton, null, {
     recv: {
       value: function recv() {
-        this.send({ type: "bang", value: "bang" });
+        this.send("bang");
       },
       writable: true,
       configurable: true
     },
     click: {
       value: function click() {
-        this.send({ type: "bang", value: "bang" });
+        this.send("bang");
       },
       writable: true,
       configurable: true
@@ -80,7 +80,7 @@ var InCounter = (function (_require) {
   _prototypeProperties(InCounter, null, {
     recv: {
       value: function recv() {
-        this.send({ type: "int", value: this._value });
+        this.send(this._value);
         if (this._value === this._to) {
           this._value = this._from;
           this._carryCount += 1;
@@ -183,13 +183,13 @@ var InMetro = (function (_require) {
 
   _prototypeProperties(InMetro, null, {
     recv: {
-      value: function recv(msg) {
+      value: function recv(value) {
         var _this = this;
-        if (this._timerId === 0 && !!msg.value) {
+        if (this._timerId === 0 && !!value) {
           this._timerId = setInterval(function () {
-            _this.send({ type: "bang", value: "bang" });
+            _this.send("bang");
           }, this._interval);
-          this.send({ type: "bang", value: "bang" });
+          this.send("bang");
         } else {
           clearInterval(this._timerId);
           this._timerId = 0;
@@ -249,10 +249,10 @@ var InObject = (function () {
 
   _prototypeProperties(InObject, null, {
     send: {
-      value: function send(msg) {
+      value: function send(value) {
         var outlet = arguments[1] === undefined ? 0 : arguments[1];
         if (this._outlets[outlet]) {
-          this._outlets[outlet].send(msg);
+          this._outlets[outlet].send(value);
         }
       },
       writable: true,
@@ -277,26 +277,6 @@ var InObject = (function () {
         if (this._outlets[0]) {
           this._outlets[0].disconnect(target);
         }
-      },
-      writable: true,
-      configurable: true
-    },
-    setPosition: {
-      value: function setPosition() {
-        var x = arguments[0] === undefined ? 0 : arguments[0];
-        var y = arguments[1] === undefined ? 0 : arguments[1];
-        this.patching_rect[0] = x;
-        this.patching_rect[1] = y;
-      },
-      writable: true,
-      configurable: true
-    },
-    setSize: {
-      value: function setSize() {
-        var w = arguments[0] === undefined ? 100 : arguments[0];
-        var h = arguments[1] === undefined ? 22 : arguments[1];
-        this.patching_rect[2] = w;
-        this.patching_rect[3] = h;
       },
       writable: true,
       configurable: true
@@ -350,9 +330,9 @@ var Outlet = (function () {
 
   _prototypeProperties(Outlet, null, {
     send: {
-      value: function send(msg) {
+      value: function send(value) {
         this._connected.forEach(function (target) {
-          target._node.recv(msg, target._index);
+          target._node.recv(value, target._index);
         });
       },
       writable: true,
@@ -445,8 +425,8 @@ var InPrint = (function (_require) {
 
   _prototypeProperties(InPrint, null, {
     recv: {
-      value: function recv(msg) {
-        console.log(this._printId + ": " + msg.value);
+      value: function recv(value) {
+        console.log(this._printId + ": " + value);
       },
       writable: true,
       configurable: true
@@ -492,11 +472,11 @@ var InToggle = (function (_require) {
 
   _prototypeProperties(InToggle, null, {
     recv: {
-      value: function recv(msg) {
-        if (msg.type === "bang") {
+      value: function recv(value) {
+        if (value === "bang") {
           this._toggle = !this._toggle;
         } else {
-          this._toggle = !!msg.value;
+          this._toggle = !!value;
         }
         this._update();
       },
@@ -513,7 +493,7 @@ var InToggle = (function (_require) {
     },
     _update: {
       value: function _update() {
-        this.send({ type: "int", value: this._toggle ? 1 : 0 });
+        this.send(this._toggle ? 1 : 0);
       },
       writable: true,
       configurable: true

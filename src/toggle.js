@@ -13,11 +13,11 @@ class InToggle extends require("./object") {
     this._toggle = false;
   }
 
-  recv(msg) {
-    if (msg.type === "bang") {
+  recv(value) {
+    if (value === "bang") {
       this._toggle = !this._toggle;
     } else {
-      this._toggle = !!msg.value;
+      this._toggle = !!value;
     }
     this._update();
   }
@@ -28,7 +28,7 @@ class InToggle extends require("./object") {
   }
 
   _update() {
-    this.send({ type: "int", value: this._toggle ? 1 : 0 });
+    this.send(this._toggle ? 1 : 0);
   }
 }
 

@@ -29,9 +29,9 @@ class InObject {
     }
   }
 
-  send(msg, outlet=0) {
+  send(value, outlet=0) {
     if (this._outlets[outlet]) {
-      this._outlets[outlet].send(msg);
+      this._outlets[outlet].send(value);
     }
   }
 
@@ -47,16 +47,6 @@ class InObject {
     if (this._outlets[0]) {
       this._outlets[0].disconnect(target);
     }
-  }
-
-  setPosition(x=0, y=0) {
-    this.patching_rect[0] = x;
-    this.patching_rect[1] = y;
-  }
-
-  setSize(w=100, h=22) {
-    this.patching_rect[2] = w;
-    this.patching_rect[3] = h;
   }
 
   click() {}
@@ -84,9 +74,9 @@ class Outlet {
     this._connected = [];
   }
 
-  send(msg) {
+  send(value) {
     this._connected.forEach((target) => {
-      target._node.recv(msg, target._index);
+      target._node.recv(value, target._index);
     });
   }
 

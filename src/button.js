@@ -12,11 +12,11 @@ class InButton extends require("./object") {
   }
 
   recv() {
-    this.send({ type: "bang", value: "bang" });
+    this.send("bang");
   }
 
   click() {
-    this.send({ type: "bang", value: "bang" });
+    this.send("bang");
   }
 }
 

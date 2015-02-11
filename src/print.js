@@ -10,8 +10,8 @@ class InPrint extends require("./object") {
     this._printId = opts.printId;
   }
 
-  recv(msg) {
-    console.log(this._printId + ": " + msg.value);
+  recv(value) {
+    console.log(this._printId + ": " + value);
   }
 }
 

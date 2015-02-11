@@ -15,7 +15,7 @@ class InCounter extends require("./object") {
   }
 
   recv() {
-    this.send({ type: "int", value: this._value });
+    this.send(this._value);
     if (this._value === this._to) {
       this._value = this._from;
       this._carryCount += 1;
