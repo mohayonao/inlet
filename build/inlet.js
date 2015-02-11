@@ -9,11 +9,64 @@ var _inherits = function (subClass, superClass) { if (typeof superClass !== "fun
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
+var InButton = (function (_require) {
+  function InButton() {
+    _classCallCheck(this, InButton);
+
+    _get(Object.getPrototypeOf(InButton.prototype), "constructor", this).call(this, {
+      maxclass: "button",
+      numinlets: 1,
+      numoutlets: 1 });
+    this.patching_rect[2] = 24;
+    this.patching_rect[3] = 24;
+  }
+
+  _inherits(InButton, _require);
+
+  _prototypeProperties(InButton, null, {
+    recv: {
+      value: function recv() {
+        this.send({ type: "bang", value: "bang" });
+      },
+      writable: true,
+      configurable: true
+    },
+    click: {
+      value: function click() {
+        this.send({ type: "bang", value: "bang" });
+      },
+      writable: true,
+      configurable: true
+    }
+  });
+
+  return InButton;
+})(require("./object"));
+
+require("./exports").button = function () {
+  return new InButton();
+};
+
+module.exports = InButton;
+},{"./exports":3,"./object":6}],2:[function(require,module,exports){
+"use strict";
+
+var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
+
+var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
 var InCounter = (function (_require) {
   function InCounter(opts) {
     _classCallCheck(this, InCounter);
 
-    _get(Object.getPrototypeOf(InCounter.prototype), "constructor", this).call(this, 5, 4);
+    _get(Object.getPrototypeOf(InCounter.prototype), "constructor", this).call(this, {
+      numinlets: 5,
+      inoutlets: 4
+    });
 
     this._algo = opts.algo;
     this._from = opts.from;
@@ -69,20 +122,21 @@ require("./exports").counter = function () {
 };
 
 module.exports = InCounter;
-},{"./exports":2,"./object":5}],2:[function(require,module,exports){
+},{"./exports":3,"./object":6}],3:[function(require,module,exports){
 "use strict";
 
 module.exports = {};
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
+require("./button");
 require("./counter");
 require("./metro");
 require("./print");
 require("./toggle");
 
 module.exports = require("./exports");
-},{"./counter":1,"./exports":2,"./metro":4,"./print":6,"./toggle":7}],4:[function(require,module,exports){
+},{"./button":1,"./counter":2,"./exports":3,"./metro":5,"./print":7,"./toggle":8}],5:[function(require,module,exports){
 "use strict";
 
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
@@ -97,7 +151,10 @@ var InMetro = (function (_require) {
   function InMetro(opts) {
     _classCallCheck(this, InMetro);
 
-    _get(Object.getPrototypeOf(InMetro.prototype), "constructor", this).call(this, 2, 1);
+    _get(Object.getPrototypeOf(InMetro.prototype), "constructor", this).call(this, {
+      numinlets: 2,
+      numoutlets: 1
+    });
 
     this._interval = opts.interval;
     this._timerId = 0;
@@ -133,29 +190,37 @@ require("./exports").metro = function () {
 };
 
 module.exports = InMetro;
-},{"./exports":2,"./object":5}],5:[function(require,module,exports){
+},{"./exports":3,"./object":6}],6:[function(require,module,exports){
 "use strict";
 
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
+var util = require("./util");
+
+var __id = 0;
+
 var InObject = (function () {
-  function InObject() {
-    var numOfInlets = arguments[0] === undefined ? 0 : arguments[0];
-    var numOfOutlets = arguments[1] === undefined ? 0 : arguments[1];
+  function InObject(opts) {
     _classCallCheck(this, InObject);
 
-    this._numOfInlets = numOfInlets;
-    this._numOfOutlets = numOfOutlets;
+    this.id = "obj-" + ++__id;
+    this.maxclass = util.defaults(opts.maxclass, "newobj");
+    this.numinlets = util.defaults(opts.numinlets, 1);
+    this.numoutlets = util.defaults(opts.numoutlets, 1);
+    this.patching_rect = [0, 0, 100, 22];
+    this.style = "";
+    this.text = null;
+
     this._inlets = [];
     this._outlets = [];
 
     var i;
-    for (i = 0; i < numOfOutlets; i++) {
+    for (i = 0; i < this.numoutlets; i++) {
       this[i] = this._outlets[i] = new Outlet(this, i);
     }
-    for (i = 0; i < numOfInlets; i++) {
+    for (i = 0; i < this.numinlets; i++) {
       this._inlets[i] = new Inlet(this, i);
       if (!this[i]) {
         this[i] = this._inlets[i];
@@ -193,6 +258,26 @@ var InObject = (function () {
         if (this._outlets[0]) {
           this._outlets[0].disconnect(target);
         }
+      },
+      writable: true,
+      configurable: true
+    },
+    setPosition: {
+      value: function setPosition() {
+        var x = arguments[0] === undefined ? 0 : arguments[0];
+        var y = arguments[1] === undefined ? 0 : arguments[1];
+        this.patching_rect[0] = x;
+        this.patching_rect[1] = y;
+      },
+      writable: true,
+      configurable: true
+    },
+    setSize: {
+      value: function setSize() {
+        var w = arguments[0] === undefined ? 100 : arguments[0];
+        var h = arguments[1] === undefined ? 22 : arguments[1];
+        this.patching_rect[2] = w;
+        this.patching_rect[3] = h;
       },
       writable: true,
       configurable: true
@@ -314,7 +399,7 @@ var Outlet = (function () {
 })();
 
 module.exports = InObject;
-},{}],6:[function(require,module,exports){
+},{"./util":9}],7:[function(require,module,exports){
 "use strict";
 
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
@@ -329,7 +414,10 @@ var InPrint = (function (_require) {
   function InPrint(opts) {
     _classCallCheck(this, InPrint);
 
-    _get(Object.getPrototypeOf(InPrint.prototype), "constructor", this).call(this, 1, 0);
+    _get(Object.getPrototypeOf(InPrint.prototype), "constructor", this).call(this, {
+      numinlets: 1,
+      numoutlets: 0
+    });
 
     this._printId = opts.printId;
   }
@@ -355,7 +443,7 @@ require("./exports").print = function () {
 };
 
 module.exports = InPrint;
-},{"./exports":2,"./object":5}],7:[function(require,module,exports){
+},{"./exports":3,"./object":6}],8:[function(require,module,exports){
 "use strict";
 
 var _prototypeProperties = function (child, staticProps, instanceProps) { if (staticProps) Object.defineProperties(child, staticProps); if (instanceProps) Object.defineProperties(child.prototype, instanceProps); };
@@ -370,7 +458,13 @@ var InToggle = (function (_require) {
   function InToggle() {
     _classCallCheck(this, InToggle);
 
-    _get(Object.getPrototypeOf(InToggle.prototype), "constructor", this).call(this, 1, 1);
+    _get(Object.getPrototypeOf(InToggle.prototype), "constructor", this).call(this, {
+      maxclass: "toggle",
+      numinlets: 1,
+      numoutlets: 1
+    });
+    this.patching_rect[2] = 24;
+    this.patching_rect[3] = 24;
 
     this._toggle = false;
   }
@@ -415,5 +509,16 @@ require("./exports").toggle = function () {
 };
 
 module.exports = InToggle;
-},{"./exports":2,"./object":5}]},{},[3])(3)
+},{"./exports":3,"./object":6}],9:[function(require,module,exports){
+"use strict";
+
+exports.defaults = defaults;
+function defaults(value) {
+  var defaultValue = arguments[1] === undefined ? null : arguments[1];
+  return value !== undefined ? value : defaultValue;
+}
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+},{}]},{},[4])(4)
 });
