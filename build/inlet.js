@@ -14,7 +14,7 @@ var InCounter = (function (_require) {
     var _this = this;
     _classCallCheck(this, InCounter);
 
-    _get(Object.getPrototypeOf(InCounter.prototype), "constructor", this).call(this);
+    _get(Object.getPrototypeOf(InCounter.prototype), "constructor", this).call(this, 5, 4);
 
     this._algo = opts.algo;
     this._from = opts.from;
@@ -101,7 +101,7 @@ var InMetro = (function (_require) {
     var _this = this;
     _classCallCheck(this, InMetro);
 
-    _get(Object.getPrototypeOf(InMetro.prototype), "constructor", this).call(this);
+    _get(Object.getPrototypeOf(InMetro.prototype), "constructor", this).call(this, 2, 1);
 
     this._interval = opts.interval;
     this._timerId = 0;
@@ -143,11 +143,27 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
 
 var InObject = (function (_require$EventEmitter) {
   function InObject() {
+    var numOfInlets = arguments[0] === undefined ? 0 : arguments[0];
+    var numOfOutlets = arguments[1] === undefined ? 0 : arguments[1];
     _classCallCheck(this, InObject);
 
     _get(Object.getPrototypeOf(InObject.prototype), "constructor", this).call(this);
 
-    this._connected = [];
+    this._numOfInlets = numOfInlets;
+    this._numOfOutlets = numOfOutlets;
+    this._inlets = [];
+    this._outlets = [];
+
+    var i;
+    for (i = 0; i < numOfOutlets; i++) {
+      this[i] = this._outlets[i] = new Outlet(this, i);
+    }
+    for (i = 0; i < numOfInlets; i++) {
+      this._inlets[i] = new Inlet(this, i);
+      if (!this[i]) {
+        this[i] = this._inlets[i];
+      }
+    }
   }
 
   _inherits(InObject, _require$EventEmitter);
@@ -155,19 +171,18 @@ var InObject = (function (_require$EventEmitter) {
   _prototypeProperties(InObject, null, {
     send: {
       value: function send(e) {
-        this._connected.forEach(function (target) {
-          target.emit("recv", e);
-        });
+        var outlet = arguments[1] === undefined ? 0 : arguments[1];
+        if (this._outlets[outlet]) {
+          this._outlets[outlet].send(e);
+        }
       },
       writable: true,
       configurable: true
     },
     connect: {
       value: function connect(target) {
-        var index = this._connected.indexOf(target);
-
-        if (index === -1) {
-          this._connected.push(target);
+        if (this._outlets[0]) {
+          this._outlets[0].connect(target);
         }
       },
       writable: true,
@@ -175,10 +190,8 @@ var InObject = (function (_require$EventEmitter) {
     },
     disconnect: {
       value: function disconnect(target) {
-        var index = this._connected.indexOf(target);
-
-        if (index !== -1) {
-          this._connected.splice(index, 1);
+        if (this._outlets[0]) {
+          this._outlets[0].disconnect(target);
         }
       },
       writable: true,
@@ -193,6 +206,112 @@ var InObject = (function (_require$EventEmitter) {
 
   return InObject;
 })(require("events").EventEmitter);
+
+var Inlet = (function () {
+  function Inlet(node, index) {
+    _classCallCheck(this, Inlet);
+
+    this._node = node;
+    this._index = index;
+  }
+
+  _prototypeProperties(Inlet, null, {
+    toInlet: {
+      value: function toInlet() {
+        return this._node._inlets[this._index] || null;
+      },
+      writable: true,
+      configurable: true
+    },
+    toOutlet: {
+      value: function toOutlet() {
+        return this._node._outlets[this._index] || null;
+      },
+      writable: true,
+      configurable: true
+    }
+  });
+
+  return Inlet;
+})();
+
+var Outlet = (function () {
+  function Outlet(node, index) {
+    _classCallCheck(this, Outlet);
+
+    this._node = node;
+    this._index = index;
+    this._connected = [];
+  }
+
+  _prototypeProperties(Outlet, null, {
+    send: {
+      value: function send(event) {
+        this._connected.forEach(function (target) {
+          target._node.emit("recv", event, target._index);
+        });
+      },
+      writable: true,
+      configurable: true
+    },
+    connect: {
+      value: function connect(target) {
+        if (target instanceof InObject) {
+          target = target._inlets[0];
+        }
+        if (target && target.toInlet) {
+          target = target.toInlet();
+        }
+        if (!(target instanceof Inlet)) {
+          throw new TypeError("inlet??");
+        }
+        if (target._node === this._node) {
+          throw new TypeError("cyclic??");
+        }
+        var index = this._connected.indexOf(target);
+
+        if (index === -1) {
+          this._connected.push(target);
+        }
+      },
+      writable: true,
+      configurable: true
+    },
+    disconnect: {
+      value: function disconnect(target) {
+        if (target instanceof InObject) {
+          target = this._node._inlets[0];
+        }
+        if (target && target.toInlet) {
+          target = target.toInlet();
+        }
+        var index = this._connected.indexOf(target);
+
+        if (index !== -1) {
+          this._connected.splice(index, 1);
+        }
+      },
+      writable: true,
+      configurable: true
+    },
+    toInlet: {
+      value: function toInlet() {
+        return this._node._inlets[this._index] || null;
+      },
+      writable: true,
+      configurable: true
+    },
+    toOutlet: {
+      value: function toOutlet() {
+        return this._node._outlets[this._index] || null;
+      },
+      writable: true,
+      configurable: true
+    }
+  });
+
+  return Outlet;
+})();
 
 module.exports = InObject;
 },{"events":8}],6:[function(require,module,exports){
@@ -209,7 +328,7 @@ var InPrint = (function (_require) {
     var _this = this;
     _classCallCheck(this, InPrint);
 
-    _get(Object.getPrototypeOf(InPrint.prototype), "constructor", this).call(this);
+    _get(Object.getPrototypeOf(InPrint.prototype), "constructor", this).call(this, 1, 0);
 
     this._printId = opts.printId;
 
@@ -245,7 +364,7 @@ var InToggle = (function (_require) {
     var _this = this;
     _classCallCheck(this, InToggle);
 
-    _get(Object.getPrototypeOf(InToggle.prototype), "constructor", this).call(this);
+    _get(Object.getPrototypeOf(InToggle.prototype), "constructor", this).call(this, 1, 1);
 
     this._toggle = false;
 

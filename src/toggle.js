@@ -2,7 +2,7 @@
 
 class InToggle extends require("./object") {
   constructor() {
-    super();
+    super(1, 1);
 
     this._toggle = false;
 

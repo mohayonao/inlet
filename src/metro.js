@@ -2,7 +2,7 @@
 
 class InMetro extends require("./object") {
   constructor(opts) {
-    super();
+    super(2, 1);
 
     this._interval = opts.interval;
     this._timerId = 0;
