@@ -5,15 +5,15 @@ class InToggle extends require("./object") {
     super(1, 1);
 
     this._toggle = false;
+  }
 
-    this.on("recv", (e) => {
-      if (e.type === "bang") {
-        this._toggle = !this._toggle;
-      } else {
-        this._toggle = !!e.value;
-      }
-      this._update();
-    });
+  recv(msg) {
+    if (msg.type === "bang") {
+      this._toggle = !this._toggle;
+    } else {
+      this._toggle = !!msg.value;
+    }
+    this._update();
   }
 
   click() {

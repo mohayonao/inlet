@@ -1,9 +1,7 @@
 "use strict";
 
-class InObject extends require("events").EventEmitter {
+class InObject {
   constructor(numOfInlets = 0, numOfOutlets = 0) {
-    super();
-
     this._numOfInlets = numOfInlets;
     this._numOfOutlets = numOfOutlets;
     this._inlets = [];
@@ -21,11 +19,13 @@ class InObject extends require("events").EventEmitter {
     }
   }
 
-  send(e, outlet=0) {
+  send(msg, outlet=0) {
     if (this._outlets[outlet]) {
-      this._outlets[outlet].send(e);
+      this._outlets[outlet].send(msg);
     }
   }
+
+  recv() {}
 
   connect(target) {
     if (this._outlets[0]) {
@@ -64,9 +64,9 @@ class Outlet {
     this._connected = [];
   }
 
-  send(event) {
+  send(msg) {
     this._connected.forEach((target) => {
-      target._node.emit("recv", event, target._index);
+      target._node.recv(msg, target._index);
     });
   }
 

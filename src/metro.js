@@ -6,18 +6,18 @@ class InMetro extends require("./object") {
 
     this._interval = opts.interval;
     this._timerId = 0;
+  }
 
-    this.on("recv", (e) => {
-      if (this._timerId === 0 && !!e.value) {
-        this._timerId = setInterval(() => {
-          this.send({ type: "bang", value: "bang" });
-        }, this._interval);
+  recv(msg) {
+    if (this._timerId === 0 && !!msg.value) {
+      this._timerId = setInterval(() => {
         this.send({ type: "bang", value: "bang" });
-      } else {
-        clearInterval(this._timerId);
-        this._timerId = 0;
-      }
-    });
+      }, this._interval);
+      this.send({ type: "bang", value: "bang" });
+    } else {
+      clearInterval(this._timerId);
+      this._timerId = 0;
+    }
   }
 }
 
