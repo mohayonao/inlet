@@ -30,10 +30,10 @@
       <li class="btn" id="run">Run</li>
     </ul>
   </div>
-  <div id="body"><div id="editor"></div><div id="viewer">VIEWER</div></div>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+  <div id="body"><div id="editor"></div><div id="viewer"></div></div>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/mode/javascript/javascript.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.12.0/mode/coffeescript/coffeescript.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/addon/edit/matchbrackets.min.js"></script>
   <script src="//cdn.jsdelivr.net/es6-promise/1.0.0/promise.min.js"></script>
   <script src="build/inlet.js"></script>
@@ -66,7 +66,7 @@
     var $ = document.getElementById.bind(document);
 
     var editor = CodeMirror($("editor"), {
-      mode: "javascript", theme: "monokai", workTime: 200, lineNumbers: true, matchBrackets: true,
+      mode: "coffeescript", theme: "monokai", workTime: 200, lineNumbers: true, matchBrackets: true,
     });
 
     var timerIds = {};
@@ -107,7 +107,7 @@
 
     $("run").onclick = function() {
       reset();
-      eval.call(null, editor.getValue());
+      eval.call(null, CoffeeScript.compile(editor.getValue()));
     };
 
     $("stop").onclick = function() {
@@ -122,7 +122,7 @@
     var m = /^(\w+):(\w+)$/.exec(q);
     if (m) {
       if (m[1] === "examples") {
-        fetch("examples/" + m[2] + ".js").then(function(res) {
+        fetch("examples/" + m[2] + ".coffee").then(function(res) {
           editor.setValue(res.text());
         });
       }
