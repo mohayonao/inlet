@@ -14,5 +14,6 @@
   "trailing" : true,
   "validthis": true,
   "eqnull"   : true,
+  "esnext"   : true,
   "node"     : true
 }

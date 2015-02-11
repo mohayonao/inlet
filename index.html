@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Inlet: プログラムの練習とMax/MSPの学習のためのプロジェクト</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/theme/monokai.min.css">
+  <style type="text/css">
+    * { margin:0; padding:0 }
+    html, body { width:100%; height:100%; background:#272822 }
+    #header { position:absolute; top:0; left:0; width:100%; height:31px; border:solid #666; border-width:0 0 1px; background:#272822; z-index:10 }
+    #header h1 { float:left; font-family:"Source Sans Pro",sans-serif; font-size:16px; color:white; margin:6px 31px }
+    #header ul { list-style:none }
+    #header ul li { float:right; display:inline-block; width:60px; height:22px }
+    #body { padding-top:31px }
+    #editor { width:50%; float:left }
+    #viewer { width:50%; float:left }
+    .CodeMirror { font-family:'Monaco','Consolas',monospace; font-size:14px; height:100%; box-sizing:border-box }
+    .btn { font-family:"Source Sans Pro",sans-serif; margin:5px; font-size:16px; text-align:center; color:#e6db74; cursor:pointer }
+    .btn:hover { text-decoration:underline; color:#f92672; background:#49483e }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>Inlet: プログラムの練習とMax/MSPの学習のためのプロジェクト</h1>
+    <ul>
+      <li class="btn" id="link">Link</li>
+      <li class="btn" id="stop">Stop</li>
+      <li class="btn" id="run">Run</li>
+    </ul>
+  </div>
+  <div id="body"><div id="editor"></div><div id="viewer">VIEWER</div></div>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/mode/javascript/javascript.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/addon/edit/matchbrackets.min.js"></script>
+  <script src="//cdn.jsdelivr.net/es6-promise/1.0.0/promise.min.js"></script>
+  <script src="build/inlet.js"></script>
+  <script>
+  function fetch(url) {
+    return new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      if (url.indexOf(".mp3") !== -1) {
+        xhr.responseType = "arraybuffer";
+      }
+      xhr.open("GET", url);
+      xhr.onload = function() {
+        resolve({
+          text: function() {
+            return xhr.response;
+          },
+          arrayBuffer: function() {
+            return xhr.response;
+          }
+        });
+      };
+      xhr.onerror = reject;
+      xhr.send();
+    });
+  }
+
+  window.onload = function() {
+    "use strict";
+
+    var $ = document.getElementById.bind(document);
+
+    var editor = CodeMirror($("editor"), {
+      mode: "javascript", theme: "monokai", workTime: 200, lineNumbers: true, matchBrackets: true,
+    });
+
+    var timerIds = {};
+    var setInterval = window.setInterval;
+    var setTimeout = window.setTimeout;
+    var clearInterval = window.clearInterval;
+    var clearTimeout = window.clearTimeout;
+
+    function reset() {
+      Object.keys(timerIds).forEach(function(timerId) {
+        window.clearInterval(timerId);
+        window.clearTimeout(timerId);
+      });
+    }
+
+    window.setInterval = function(func, delay) {
+      var timerId = setInterval(func, delay);
+
+      timerIds[timerId] = true;
+
+      return timerId;
+    };
+    window.setTimeout = function(func, delay) {
+      var timerId = setTimeout(func, delay);
+
+      timerIds[timerId] = true;
+
+      return timerId;
+    };
+    window.clearInterval = function(timerId) {
+      clearInterval(timerId);
+      delete timerIds[timerId];
+    };
+    window.clearTimeout = function(timerId) {
+      clearTimeout(timerId);
+      delete timerIds[timerId];
+    };
+
+    $("run").onclick = function() {
+      reset();
+      eval.call(null, editor.getValue());
+    };
+
+    $("stop").onclick = function() {
+      reset();
+    };
+
+    $("link").onclick = function() {
+      window.location = "#" + window.encodeURIComponent(editor.getValue());
+    };
+
+    var q = window.decodeURIComponent(window.location.hash.substr(1));
+    var m = /^(\w+):(\w+)$/.exec(q);
+    if (m) {
+      if (m[1] === "examples") {
+        fetch("examples/" + m[2] + ".js").then(function(res) {
+          editor.setValue(res.text());
+        });
+      }
+    } else {
+      editor.setValue(q);
+    }
+  };
+  </script>
+</body>
+</html>
